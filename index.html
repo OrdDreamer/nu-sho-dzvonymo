@@ -112,6 +112,7 @@ h1 {
 .dial-wrap { width: var(--d); height: var(--d); touch-action: none; }
 .dial { width: 100%; height: 100%; display: block; cursor: grab; -webkit-user-select: none; user-select: none; }
 .dial:active { cursor: grabbing; }
+body.dragging { cursor: grabbing; -webkit-user-select: none; user-select: none; }
 .dial-wrap.spinning { animation: tremble 80ms steps(1, end) infinite; }
 @keyframes tremble {
   0% { transform: translate(0.9px, -0.6px); }
@@ -814,48 +815,85 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
   }
   spinBtn.addEventListener('click', randomRoll);
 
-  /* ---- drag: put a finger in a hole, pull to the stop, let go ---- */
-  let dragging = false, grabAngle = 0, travelled = 0, dragTicks = 0;
+  /* ---- drag: put a finger in a hole, pull to the stop, let go ----
+     The pull is accumulated move by move rather than measured against the grab
+     point: a difference from the grab point has to be wrapped into +-180, and a
+     pull past half a turn then reads as a pull backwards and collapses the wheel.
+     Moves are tracked on the window, so once the pull has started the pointer may
+     wander anywhere - across the display, off the dial, off the page - and only
+     its bearing from the centre of the dial counts. Right at that centre a pixel
+     of travel is tens of degrees, so the middle is a dead zone where the wheel
+     holds still instead of lurching. */
+  const DEAD_ZONE = 0.14;
+  let dragging = false, lastAim = 0, dragAngle = 0, travelled = 0, dragTicks = 0;
 
-  function pointerAngle(e) {
+  function polar(e) {
     const r = dialSvg.getBoundingClientRect();
     const dx = e.clientX - (r.left + r.width / 2);
     const dy = e.clientY - (r.top + r.height / 2);
-    return Math.atan2(dx, -dy) * 180 / Math.PI;
+    return {
+      aim: Math.atan2(dx, -dy) * 180 / Math.PI,
+      reach: Math.hypot(dx, dy) / (r.width / 2)
+    };
   }
   function wrapDeg(a) {
     while (a > 180) a -= 360;
     while (a < -180) a += 360;
     return a;
   }
+  /* let go short of the stop and the wheel eases home instead of snapping */
+  function springHome(from) {
+    const ms = reduce ? 1 : 170;
+    const t0 = performance.now();
+    (function frame(now) {
+      const p = Math.min(1, (now - t0) / ms);
+      setAngle(from * (1 - p * p * (3 - 2 * p)));
+      if (p < 1) requestAnimationFrame(frame); else softTick();
+    })(performance.now());
+  }
+
+  function onDragMove(e) {
+    if (!dragging) return;
+    const p = polar(e);
+    const delta = wrapDeg(p.aim - lastAim);
+    lastAim = p.aim;
+    if (p.reach < DEAD_ZONE) return;
+    dragAngle = Math.max(0, Math.min(MAX_PULSES * STEP, dragAngle + delta));
+    travelled = Math.max(travelled, dragAngle);
+    const crossed = Math.floor(dragAngle / STEP);
+    while (dragTicks < crossed) { dragTicks++; softTick(); }
+    dragTicks = crossed;
+    setAngle(dragAngle);
+  }
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    document.body.classList.remove('dragging');
+    removeEventListener('pointermove', onDragMove);
+    removeEventListener('pointerup', endDrag);
+    removeEventListener('pointercancel', endDrag);
+    removeEventListener('blur', endDrag);
+    const pulses = Math.round(dragAngle / STEP);
+    if (pulses >= 1) { roll(pulses, dragAngle, false); return; }
+    if (travelled < 4) { setAngle(0); randomRoll(); return; }
+    springHome(dragAngle);
+  }
 
   dialSvg.addEventListener('pointerdown', e => {
     if (busy || !dict) return;
     e.preventDefault();
     dragging = true;
+    dragAngle = 0;
     travelled = 0;
     dragTicks = 0;
-    grabAngle = pointerAngle(e);
+    lastAim = polar(e).aim;
+    document.body.classList.add('dragging');
     try { dialSvg.setPointerCapture(e.pointerId); } catch (err) {}
+    addEventListener('pointermove', onDragMove);
+    addEventListener('pointerup', endDrag);
+    addEventListener('pointercancel', endDrag);
+    addEventListener('blur', endDrag);
   });
-  dialSvg.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const next = Math.max(0, Math.min(MAX_PULSES * STEP, wrapDeg(pointerAngle(e) - grabAngle)));
-    travelled = Math.max(travelled, next);
-    const crossed = Math.floor(next / STEP);
-    while (dragTicks < crossed) { dragTicks++; softTick(); }
-    setAngle(next);
-  });
-  function release() {
-    if (!dragging) return;
-    dragging = false;
-    const pulses = Math.round(angle / STEP);
-    if (pulses >= 1) { roll(pulses, angle, false); return; }
-    if (travelled < 6) { setAngle(0); randomRoll(); return; }
-    setAngle(0);
-  }
-  dialSvg.addEventListener('pointerup', release);
-  dialSvg.addEventListener('pointercancel', release);
 
   /* ---- boot ---- */
   function start() {
