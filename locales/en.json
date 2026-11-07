@@ -17,7 +17,7 @@
   "yes": [
     {
       "id": "y001",
-      "text": "They watched your story three times. That is an invitation."
+      "text": "You have opened that contact three times already. So call."
     },
     {
       "id": "y002",
@@ -37,7 +37,7 @@
     },
     {
       "id": "y006",
-      "text": "They are definitely awake. Nobody sleeps anyway."
+      "text": "That person is definitely awake. People never sleep, after all."
     },
     {
       "id": "y007",
@@ -45,7 +45,7 @@
     },
     {
       "id": "y008",
-      "text": "If they don’t pick up, they simply didn’t hear it."
+      "text": "No answer just means they didn’t hear it."
     },
     {
       "id": "y009",
@@ -57,11 +57,7 @@
     },
     {
       "id": "y011",
-      "text": "They won’t call first. Someone has to be the adult."
-    },
-    {
-      "id": "y012",
-      "text": "You’ll call back once and then quit. Obviously."
+      "text": "Nobody calls first. Someone has to be the adult."
     },
     {
       "id": "y013",
@@ -85,27 +81,27 @@
     },
     {
       "id": "y018",
-      "text": "You’ve already drafted the opening line. Don’t waste it."
+      "text": "You have already worked out what to say. A shame not to say it."
     },
     {
       "id": "y019",
-      "text": "Roaming is expensive, but pride costs more."
+      "text": "Roaming is expensive, but silence costs more."
     },
     {
       "id": "y020",
-      "text": "Excuse ready: “just checking whether you’re alive”."
+      "text": "Reason ready: “just checking whether you’re alive”."
     },
     {
       "id": "y021",
-      "text": "They haven’t blocked you. So they’re waiting."
+      "text": "You still haven’t been blocked. So they’re waiting."
     },
     {
       "id": "y022",
-      "text": "Bad signal means a reason to call again."
+      "text": "If the line is bad, that is a reason to call again."
     },
     {
       "id": "y023",
-      "text": "You’re not asking anything serious. Just hearing a voice."
+      "text": "No serious conversation. Just hear a voice and go."
     },
     {
       "id": "y024",
@@ -117,7 +113,7 @@
     },
     {
       "id": "y026",
-      "text": "They’re staring at their phone too. Right now."
+      "text": "On the other end they’re staring at a phone too."
     },
     {
       "id": "y027",
@@ -133,7 +129,7 @@
     },
     {
       "id": "y030",
-      "text": "They won’t recognise you right away. Even better."
+      "text": "Even if they don’t place you right away — all the better."
     },
     {
       "id": "y031",
@@ -153,7 +149,7 @@
     },
     {
       "id": "y035",
-      "text": "They liked a photo from 2019 yesterday. They’re ready."
+      "text": "Yesterday someone liked your photo from 2019. That is a signal."
     },
     {
       "id": "y036",
@@ -165,7 +161,7 @@
     },
     {
       "id": "y038",
-      "text": "What if they’re waiting for exactly your call. Happens."
+      "text": "What if they’re waiting for exactly your call. That happens."
     },
     {
       "id": "y039",
@@ -180,12 +176,8 @@
       "text": "They’ll say “I was just thinking about you”. Possibly."
     },
     {
-      "id": "y042",
-      "text": "Unknown number? Then call from your own. Be brave."
-    },
-    {
       "id": "y043",
-      "text": "The neighbours hear everything anyway. Give them material."
+      "text": "Even if the neighbours hear everything — give them something worth hearing."
     },
     {
       "id": "y044",
@@ -209,15 +201,11 @@
     },
     {
       "id": "y049",
-      "text": "Your earbuds are charged. Fate left you no excuses."
-    },
-    {
-      "id": "y050",
-      "text": "They called first once. Debts get repaid."
+      "text": "Your earbuds are charged. Enough excuses."
     },
     {
       "id": "y051",
-      "text": "Phones were built for calling. Shocking news."
+      "text": "Phones were built for calling. Shocking, right?"
     },
     {
       "id": "y052",
@@ -225,31 +213,19 @@
     },
     {
       "id": "y053",
-      "text": "No answer the first time? Call the third time."
+      "text": "They don’t answer first time. Call the third time."
     },
     {
       "id": "y054",
-      "text": "Office hours are over, so you can be human now."
-    },
-    {
-      "id": "y055",
-      "text": "You won’t cry. Well, almost."
+      "text": "Office hours are over — so you can actually talk."
     },
     {
       "id": "y056",
       "text": "“Let’s talk later” — later has arrived."
     },
     {
-      "id": "y057",
-      "text": "The die has seen your unsent drafts. Just call."
-    },
-    {
       "id": "y058",
-      "text": "Your mood is perfect right now. In an hour it won’t be."
-    },
-    {
-      "id": "y059",
-      "text": "A call can’t be edited. That’s exactly why it works."
+      "text": "Your mood is perfect for this right now. In an hour it won’t be."
     },
     {
       "id": "y060",
@@ -271,7 +247,7 @@
     },
     {
       "id": "n004",
-      "text": "The subscriber would rather not. Neither would the die."
+      "text": "The subscriber would rather not. Neither would the dial."
     },
     {
       "id": "n005",
@@ -307,7 +283,7 @@
     },
     {
       "id": "n013",
-      "text": "The die says no. The die saw your weekend."
+      "text": "The dial says no. The dial saw your weekend."
     },
     {
       "id": "n014",
