@@ -16,8 +16,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Manrope:wght@500;600;800&display=swap">
 <style>
-/* Layout: one dark "late-night hallway, phone under a warm lamp" screen;
-   header, glowing amber bakelite die on a lit table, verdict line, two pill buttons */
+/* Layout: one dark "late-night hallway, phone under a warm lamp" screen; header,
+   a rotary dial lit on a table, verdict line, two pill buttons. The dial answers
+   through the green display in its hub, where a real phone keeps its number card. */
 body { margin: 0 }
 [hidden] { display: none !important }
 :root {
@@ -31,9 +32,10 @@ body { margin: 0 }
   --ink-dim: #B3A08C;
   --on-amber: #2A1705;
   --edge: rgba(244, 185, 66, 0.7);
+  --screen: #5BFFA8;
   --font-display: "Oswald", "Arial Narrow", Impact, sans-serif;
   --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --s: min(54vw, 32vh, 230px);
+  --d: min(80vw, 42vh, 340px);
   color-scheme: dark;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -89,14 +91,14 @@ h1 {
 
 .stage {
   flex: 1;
-  min-height: calc(var(--s) * 1.7);
+  min-height: calc(var(--d) * 1.08);
   display: flex; align-items: center; justify-content: center;
   position: relative;
 }
 .floor {
   position: absolute;
   left: 50%; top: 50%;
-  width: calc(var(--s) * 2.6); height: calc(var(--s) * 1.1);
+  width: calc(var(--d) * 1.7); height: calc(var(--d) * 0.72);
   transform: translate(-50%, 18%);
   background:
     radial-gradient(ellipse 34% 26% at 50% 34%, rgba(255, 206, 120, 0.72), rgba(230, 160, 50, 0.26) 55%, transparent 100%),
@@ -104,81 +106,31 @@ h1 {
   filter: blur(6px);
   pointer-events: none;
 }
-.bob { animation: bob 4s ease-in-out infinite; filter: drop-shadow(0 0 calc(var(--s) * 0.12) rgba(250, 190, 90, 0.45)); }
-@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-.scene { width: var(--s); height: var(--s); perspective: calc(var(--s) * 4.5); position: relative; }
-.scene.ringing { animation: ring 0.52s ease-in-out 2; }
+.bob { animation: bob 4s ease-in-out infinite; filter: drop-shadow(0 calc(var(--d) * 0.03) calc(var(--d) * 0.07) rgba(0, 0, 0, 0.55)); }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+.dial-wrap { width: var(--d); height: var(--d); touch-action: none; }
+.dial { width: 100%; height: 100%; display: block; cursor: grab; -webkit-user-select: none; user-select: none; }
+.dial:active { cursor: grabbing; }
+.dial-wrap.spinning { animation: tremble 80ms steps(1, end) infinite; }
+@keyframes tremble {
+  0% { transform: translate(0.9px, -0.6px); }
+  25% { transform: translate(-0.8px, 0.7px); }
+  50% { transform: translate(0.5px, 0.9px); }
+  75% { transform: translate(-0.6px, -0.8px); }
+}
+.dial-wrap.ringing { animation: ring 0.5s ease-in-out 2; }
 @keyframes ring {
   0%, 100% { transform: rotate(0deg); }
-  15% { transform: rotate(-3.2deg); }
-  38% { transform: rotate(3.2deg); }
-  62% { transform: rotate(-2deg); }
-  82% { transform: rotate(1.4deg); }
+  15% { transform: rotate(-2.6deg); }
+  38% { transform: rotate(2.6deg); }
+  62% { transform: rotate(-1.6deg); }
+  82% { transform: rotate(1.1deg); }
 }
-.cube {
-  position: relative; width: 100%; height: 100%;
-  transform-style: preserve-3d;
-  transform: rotateX(-22deg) rotateY(-32deg);
-}
-.cube.spinning { transition: transform 1.7s cubic-bezier(0.17, 0.84, 0.25, 1); }
-.face {
-  position: absolute; inset: 0;
-  border-radius: calc(var(--s) * 0.09);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  background-image:
-    radial-gradient(circle at 28% 22%, rgba(255, 238, 205, 0.5), transparent 52%),
-    var(--handsets, none),
-    linear-gradient(160deg, #F8CE7C 0%, #D9972B 52%, var(--amber-dark) 100%);
-  background-size: 100% 100%, calc(var(--s) * 0.92) calc(var(--s) * 0.92), 100% 100%;
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 235, 195, 0.55),
-    inset 0 0 calc(var(--s) * 0.16) rgba(255, 210, 130, 0.55),
-    inset 0 calc(var(--s) * -0.1) calc(var(--s) * 0.2) rgba(60, 30, 0, 0.55);
-  display: grid; place-items: center;
-}
-.face { --z: calc(var(--s) / 2); }
-.f-front  { transform: translateZ(var(--z)); }
-.f-back   { transform: rotateY(180deg) translateZ(var(--z)); }
-.f-right  { transform: rotateY(90deg) translateZ(var(--z)); filter: brightness(0.82) saturate(1.1); }
-.f-left   { transform: rotateY(-90deg) translateZ(var(--z)); filter: brightness(0.82); }
-.f-top    { transform: rotateX(90deg) translateZ(var(--z)); filter: brightness(1.12); }
-.f-bottom { transform: rotateX(-90deg) translateZ(var(--z)); filter: brightness(0.6); }
-.face.core { --z: calc(var(--s) * 0.45); inset: 5%; border-radius: 0; background: #B97E20; background-image: none; box-shadow: none; }
-.f-front::before {
-  content: ""; position: absolute; left: 6%; right: 6%; top: 9%; height: 20%;
-  border-radius: 40% 40% 50% 50% / 30% 30% 70% 70%;
-  background: linear-gradient(180deg, rgba(255, 246, 228, 0.42), rgba(255, 230, 190, 0.08));
-  filter: blur(1px);
-}
-.answer {
-  position: relative;
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: calc(var(--s) * 0.34);
-  letter-spacing: -0.02em;
-  color: #FFF6E6;
-  text-shadow:
-    0 2px 0 rgba(80, 40, 0, 0.65),
-    0 -1px 0 rgba(255, 250, 235, 0.6),
-    0 0 calc(var(--s) * 0.08) rgba(255, 220, 150, 0.55);
-  transition: opacity 0.2s;
-}
-.pips { position: absolute; inset: 18%; display: grid; gap: 14%; }
-.pips.p4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.pips.p2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.pips.p2 .pip:nth-child(2) { grid-column: 2; grid-row: 2; }
-.pips.p1 { place-items: center; }
-.pip {
-  width: calc(var(--s) * 0.17); height: calc(var(--s) * 0.17);
-  border-radius: 50%;
-  place-self: center;
-  background: radial-gradient(circle at 40% 35%, #FFF8EC, #FFE6BC 70%, #E0B169);
-  box-shadow: inset 0 2px 4px rgba(70, 35, 0, 0.55), 0 0 6px rgba(255, 225, 165, 0.35);
-  display: grid; place-items: center;
-  color: #8A5A14;
-}
-.pip svg { width: 64%; height: 64%; }
+.digit { font: 600 30px var(--font-body); fill: #FFDFA6; opacity: 0.85; }
+.dot-off { fill: #0E3A24; }
+.dot-on { fill: var(--screen); }
+#screen-on { filter: drop-shadow(0 0 4px rgba(91, 255, 168, 0.85)); }
 
 .verdict {
   margin: 0;
@@ -273,6 +225,8 @@ h1 {
 .sheet h2 { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--foam); }
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 16px; }
 .row b { color: var(--amber-hot); font-variant-numeric: tabular-nums; font-weight: 800; }
+.row.toggle { align-items: center; cursor: pointer; }
+.row.toggle input { width: 22px; height: 22px; accent-color: var(--amber); cursor: pointer; }
 .hint { margin: 0; font-size: 14px; color: var(--ink-dim); line-height: 1.5; }
 input[type="range"] { width: 100%; accent-color: var(--amber); }
 .langs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 4px; border-radius: 999px; border: 1px solid rgba(244, 185, 66, 0.3); background: rgba(20, 12, 6, 0.6); }
@@ -300,8 +254,7 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
 
 @media (prefers-reduced-motion: reduce) {
   .bob { animation: none; }
-  .scene.ringing { animation: none; }
-  .cube.spinning { transition-duration: 0.01s; }
+  .dial-wrap.spinning, .dial-wrap.ringing { animation: none; }
 }
 </style>
 </head>
@@ -321,16 +274,57 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
   <div class="stage">
     <div class="floor" aria-hidden="true"></div>
     <div class="bob">
-      <div class="scene" id="scene">
-        <div class="cube" id="cube" role="img" aria-label="">
-          <div class="face core f-front"></div><div class="face core f-back"></div><div class="face core f-right"></div><div class="face core f-left"></div><div class="face core f-top"></div><div class="face core f-bottom"></div>
-          <div class="face f-front"><span class="answer" id="answer"></span></div>
-          <div class="face f-back"><div class="pips p4"></div></div>
-          <div class="face f-right"><div class="pips p4"></div></div>
-          <div class="face f-left"><div class="pips p2"></div></div>
-          <div class="face f-top"><div class="pips p4"></div></div>
-          <div class="face f-bottom"><div class="pips p1"></div></div>
-        </div>
+      <div class="dial-wrap" id="dial-wrap">
+        <svg class="dial" id="dial" viewBox="0 0 400 400" role="img" aria-label="">
+          <defs>
+            <radialGradient id="plate" cx="50%" cy="38%" r="68%">
+              <stop offset="0%" stop-color="#2A1B36"/>
+              <stop offset="100%" stop-color="#0B0712"/>
+            </radialGradient>
+            <linearGradient id="bakelite" x1="18%" y1="0%" x2="82%" y2="100%">
+              <stop offset="0%" stop-color="#FBD68C"/>
+              <stop offset="48%" stop-color="#DB9B2C"/>
+              <stop offset="100%" stop-color="#7A4A10"/>
+            </linearGradient>
+            <linearGradient id="bezel" x1="30%" y1="0%" x2="70%" y2="100%">
+              <stop offset="0%" stop-color="#FFE9BE"/>
+              <stop offset="45%" stop-color="#C08A2A"/>
+              <stop offset="100%" stop-color="#5E3A0C"/>
+            </linearGradient>
+            <radialGradient id="glass" cx="50%" cy="34%" r="70%">
+              <stop offset="0%" stop-color="#0B2C1C"/>
+              <stop offset="100%" stop-color="#03110A"/>
+            </radialGradient>
+            <pattern id="tex" width="104" height="104" patternUnits="userSpaceOnUse">
+              <image id="tex-img" width="104" height="104" href=""/>
+            </pattern>
+            <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="1" fill="rgba(0,0,0,0.45)"/>
+            </pattern>
+            <clipPath id="screen-clip"><circle cx="200" cy="200" r="69"/></clipPath>
+          </defs>
+
+          <circle cx="200" cy="200" r="196" fill="url(#plate)" stroke="rgba(244,185,66,0.3)" stroke-width="1.5"/>
+          <g id="digits"></g>
+
+          <g id="wheel">
+            <path id="wheel-face" fill="url(#bakelite)" fill-rule="evenodd"
+                  stroke="rgba(255,238,200,0.5)" stroke-width="1.6"/>
+            <path id="wheel-tex" fill="url(#tex)" fill-rule="evenodd" opacity="0.55"/>
+          </g>
+
+          <g id="stop"></g>
+
+          <circle cx="200" cy="200" r="78" fill="url(#bezel)"/>
+          <circle cx="200" cy="200" r="70" fill="#140B06"/>
+          <circle cx="200" cy="200" r="69" fill="url(#glass)"/>
+          <g clip-path="url(#screen-clip)">
+            <g id="screen-off"></g>
+            <g id="screen-on"></g>
+            <rect x="131" y="131" width="138" height="138" fill="url(#scan)" opacity="0.5"/>
+          </g>
+          <circle cx="200" cy="200" r="69" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="2"/>
+        </svg>
       </div>
     </div>
   </div>
@@ -372,6 +366,7 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
     <label class="row" for="chance"><span data-i18n="chance"></span> <b id="chance-out">100%</b></label>
     <input type="range" id="chance" min="0" max="100" step="5" value="100">
     <p class="hint" data-i18n="hint"></p>
+    <label class="row toggle" for="sound"><span data-i18n="sound"></span> <input type="checkbox" id="sound" checked></label>
     <button class="sheet-close" id="sheet-close" type="button" data-i18n="done"></button>
   </div>
 </div>
@@ -379,9 +374,9 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
 <div class="toast" id="toast" role="status" hidden></div>
 
 <!-- locales:start - generated from locales/*.json by tools/inline-locales.py -->
-<script type="application/json" id="locale-uk">{"ui":{"title":"Ну шо, дзвонимо?","settings":"Налаштування","language":"Мова","chance":"Шанс на «ТАК»","hint":"0% — режим «не турбувати», 100% — режим «набираю прямо зараз».","done":"Готово","spin":"Крути диск!","donate":"Розробнику на телефон","cube":"Кубик-слухавка з відповіддю","toast":"Тут буде лінк на банку. Обіцяю не витратити на роумінг.","yesWord":"ТАК","noWord":"НІ"},"yes":[{"id":"y001","text":"Воно тричі подивилось твій сторіс. Це запрошення."},{"id":"y002","text":"Написати — це боягузтво. Дзвони."},{"id":"y003","text":"Голосові не рахуються. Треба живим голосом."},{"id":"y004","text":"Один дзвінок — і все стане ясно. Ну або гірше."},{"id":"y005","text":"Третя ночі — найчесніший час для розмови."},{"id":"y006","text":"Воно точно не спить. Люди ж не спять."},{"id":"y007","text":"У тебе ще 400 хвилин по тарифу. Не пропадати ж."},{"id":"y008","text":"Якщо не відповість — значить просто не чуло."},{"id":"y009","text":"Мама казала дзвонити частіше. Мама не казала кому."},{"id":"y010","text":"Гудки — це вже половина розмови."},{"id":"y011","text":"Воно перше не подзвонить. Хтось має бути дорослим."},{"id":"y012","text":"Передзвониш — і одразу завʼяжеш. Звісно."},{"id":"y013","text":"Телефон уже в руці. Решта — формальність."},{"id":"y014","text":"На пʼять хвилин. Як завжди — на дві години."},{"id":"y015","text":"Тиша в чаті означає, що треба дзвонити."},{"id":"y016","text":"«Набери, як зможеш» — ти ж можеш."},{"id":"y017","text":"Номер досі не видалений. Це знак."},{"id":"y018","text":"Ти вже склав що сказати. Шкода не використати."},{"id":"y019","text":"Роумінг дорогий, але гордість — дорожча."},{"id":"y020","text":"Відмовка готова: «просто перевіряю, чи ти живий»."},{"id":"y021","text":"Воно не заблокувало тебе. Отже, чекає."},{"id":"y022","text":"Зв’язок поганий — буде привід передзвонити."},{"id":"y023","text":"Ти ж не питаєш нічого серйозного. Просто голос послухати."},{"id":"y024","text":"Випадковий дзвінок у кишені не рахується. Треба свідомо."},{"id":"y025","text":"Один гудок — і одразу скинеш. Головне почати."},{"id":"y026","text":"Воно теж дивиться в телефон. Прямо зараз."},{"id":"y027","text":"Якщо не подзвониш — будеш думати про це до ранку."},{"id":"y028","text":"Мовчання триває два роки. Пора його зіпсувати."},{"id":"y029","text":"Ти ж не маніяк. Ти просто дуже хочеш поговорити."},{"id":"y030","text":"Воно тебе не одразу згадає. Тим цікавіше."},{"id":"y031","text":"Дзвонити о 7:58 ранку — це турбота."},{"id":"y032","text":"Автовідповідач теж слухач. І не перебиває."},{"id":"y033","text":"Ти набрав 80% номера. Нечесно зупинятись."},{"id":"y034","text":"Відеозвʼязок не вмикай. Але подзвони."},{"id":"y035","text":"Воно вчора лайкнуло фото 2019 року. Воно готове."},{"id":"y036","text":"У тебе рівно одна причина. Цього достатньо."},{"id":"y037","text":"Текст можна перечитати. Голос — не можна. Дзвони."},{"id":"y038","text":"Раптом там чекають саме твого дзвінка. Трапляється."},{"id":"y039","text":"Зарядки 4%. Значить, розмова буде коротка."},{"id":"y040","text":"Ти вже репетирував перше речення. Двічі."},{"id":"y041","text":"Воно скаже «я якраз про тебе думало». Можливо."},{"id":"y042","text":"Невідомий номер? То подзвони зі свого. Не бійся."},{"id":"y043","text":"Сусіди однаково все чують. Хоч буде що слухати."},{"id":"y044","text":"Хвилина розмови дешевша за тиждень роздумів."},{"id":"y045","text":"Воно прочитало і не відповіло. Отже, чекає дзвінка."},{"id":"y046","text":"Ти набрав і скинув. Тепер треба пояснити. Дзвони."},{"id":"y047","text":"Пропущений від тебе — теж повідомлення."},{"id":"y048","text":"«Привіт, це я» — решта придумається по ходу."},{"id":"y049","text":"Гарнітура заряджена. Доля не дає відмазок."},{"id":"y050","text":"Вона колись сама дзвонила першою. Борг повертаємо."},{"id":"y051","text":"Телефон створений для дзвінків. Шокуюча новина."},{"id":"y052","text":"Твій голос по телефону звучить краще. Чесно."},{"id":"y053","text":"Воно не відповідає з першого разу. Дзвони з третього."},{"id":"y054","text":"Робочий час закінчився — значить можна по-людськи."},{"id":"y055","text":"Ти ж не будеш плакати. Ну, майже."},{"id":"y056","text":"«Поговоримо потім» — потім настало."},{"id":"y057","text":"Кубик бачив твої чернетки повідомлень. Краще подзвони."},{"id":"y058","text":"У тебе ідеальний настрій. Через годину буде гірший."},{"id":"y059","text":"Дзвінок не можна відредагувати. Саме тому він працює."},{"id":"y060","text":"Останній раз. Повторюй за мною: останній раз."}],"no":[{"id":"n001","text":"Не дзвони. Напиши. Або нічого не роби."},{"id":"n002","text":"Поклади телефон. Повільно."},{"id":"n003","text":"Сьогодні твій голос нікому не потрібен. Навіть тобі."},{"id":"n004","text":"Абонент не бажає. І кубик теж."},{"id":"n005","text":"Є речі, які краще не казати вголос."},{"id":"n006","text":"Дзвінок о третій ночі — це не жест, це діагноз."},{"id":"n007","text":"Краще виспись. Номер нікуди не втече."},{"id":"n008","text":"Ні. І не передзвонюй «просто спитати»."},{"id":"n009","text":"Телефон вигадали, щоб ним не користуватись."},{"id":"n010","text":"Залиш людину в спокої. І себе теж."},{"id":"n011","text":"Те, що ти хочеш сказати, завтра здасться дурним."},{"id":"n012","text":"Нехай подзвонить перше. Хоч раз."},{"id":"n013","text":"Кубик проти. Кубик бачив твої вихідні."},{"id":"n014","text":"Ні. Але ти ж все одно подзвониш."}]}</script>
-<script type="application/json" id="locale-ru">{"ui":{"title":"Ну что, звоним?","settings":"Настройки","language":"Язык","chance":"Шанс на «ДА»","hint":"0% — режим «не беспокоить», 100% — режим «набираю прямо сейчас».","done":"Готово","spin":"Крути диск!","donate":"Разработчику на телефон","cube":"Кубик-трубка с ответом","toast":"Тут будет ссылка на банку. Обещаю не потратить на роуминг.","yesWord":"ДА","noWord":"НЕТ"},"yes":[{"id":"y001","text":"Оно три раза посмотрело твой сторис. Это приглашение."},{"id":"y002","text":"Написать — это трусость. Звони."},{"id":"y003","text":"Голосовые не считаются. Нужно живым голосом."},{"id":"y004","text":"Один звонок — и всё станет ясно. Ну или хуже."},{"id":"y005","text":"Три ночи — самое честное время для разговора."},{"id":"y006","text":"Оно точно не спит. Люди же не спят."},{"id":"y007","text":"У тебя ещё 400 минут по тарифу. Не пропадать же."},{"id":"y008","text":"Если не ответит — значит просто не услышало."},{"id":"y009","text":"Мама говорила звонить чаще. Мама не говорила кому."},{"id":"y010","text":"Гудки — это уже половина разговора."},{"id":"y011","text":"Оно первым не позвонит. Кто-то должен быть взрослым."},{"id":"y012","text":"Перезвонишь — и сразу завяжешь. Конечно."},{"id":"y013","text":"Телефон уже в руке. Остальное — формальность."},{"id":"y014","text":"На пять минут. Как всегда — на два часа."},{"id":"y015","text":"Тишина в чате означает, что надо звонить."},{"id":"y016","text":"«Набери, как сможешь» — ты же можешь."},{"id":"y017","text":"Номер до сих пор не удалён. Это знак."},{"id":"y018","text":"Ты уже придумал что сказать. Жалко не использовать."},{"id":"y019","text":"Роуминг дорогой, но гордость — дороже."},{"id":"y020","text":"Отмазка готова: «просто проверяю, жив ли ты»."},{"id":"y021","text":"Оно тебя не заблокировало. Значит, ждёт."},{"id":"y022","text":"Связь плохая — будет повод перезвонить."},{"id":"y023","text":"Ты же не спрашиваешь ничего серьёзного. Просто голос послушать."},{"id":"y024","text":"Случайный звонок в кармане не считается. Надо осознанно."},{"id":"y025","text":"Один гудок — и сразу сбросишь. Главное начать."},{"id":"y026","text":"Оно тоже смотрит в телефон. Прямо сейчас."},{"id":"y027","text":"Если не позвонишь — будешь думать об этом до утра."},{"id":"y028","text":"Молчание длится два года. Пора его испортить."},{"id":"y029","text":"Ты же не маньяк. Ты просто очень хочешь поговорить."},{"id":"y030","text":"Оно тебя не сразу вспомнит. Тем интереснее."},{"id":"y031","text":"Звонить в 7:58 утра — это забота."},{"id":"y032","text":"Автоответчик тоже слушатель. И не перебивает."},{"id":"y033","text":"Ты набрал 80% номера. Нечестно останавливаться."},{"id":"y034","text":"Видеосвязь не включай. Но позвони."},{"id":"y035","text":"Оно вчера лайкнуло фото 2019 года. Оно готово."},{"id":"y036","text":"У тебя ровно одна причина. Этого достаточно."},{"id":"y037","text":"Текст можно перечитать. Голос — нельзя. Звони."},{"id":"y038","text":"А вдруг там ждут именно твоего звонка. Бывает."},{"id":"y039","text":"Заряда 4%. Значит, разговор будет короткий."},{"id":"y040","text":"Ты уже репетировал первую фразу. Дважды."},{"id":"y041","text":"Оно скажет «я как раз о тебе думало». Возможно."},{"id":"y042","text":"Неизвестный номер? Так позвони со своего. Смелее."},{"id":"y043","text":"Соседи всё равно всё слышат. Пусть будет что слушать."},{"id":"y044","text":"Минута разговора дешевле недели раздумий."},{"id":"y045","text":"Оно прочитало и не ответило. Значит, ждёт звонка."},{"id":"y046","text":"Ты набрал и сбросил. Теперь надо объяснить. Звони."},{"id":"y047","text":"Пропущенный от тебя — тоже сообщение."},{"id":"y048","text":"«Привет, это я» — остальное придумается по ходу."},{"id":"y049","text":"Наушники заряжены. Судьба не оставила отмазок."},{"id":"y050","text":"Оно когда-то звонило первым. Долг возвращаем."},{"id":"y051","text":"Телефон создан для звонков. Шокирующая новость."},{"id":"y052","text":"Твой голос по телефону звучит лучше. Честно."},{"id":"y053","text":"С первого раза не отвечает. Звони с третьего."},{"id":"y054","text":"Рабочий день кончился — значит можно по-человечески."},{"id":"y055","text":"Ты же не будешь плакать. Ну, почти."},{"id":"y056","text":"«Поговорим потом» — потом наступило."},{"id":"y057","text":"Кубик видел твои черновики сообщений. Лучше позвони."},{"id":"y058","text":"У тебя идеальное настроение. Через час будет хуже."},{"id":"y059","text":"Звонок нельзя отредактировать. Именно поэтому он работает."},{"id":"y060","text":"Последний раз. Повторяй за мной: последний раз."}],"no":[{"id":"n001","text":"Не звони. Напиши. Или не делай ничего."},{"id":"n002","text":"Положи телефон. Медленно."},{"id":"n003","text":"Сегодня твой голос никому не нужен. Даже тебе."},{"id":"n004","text":"Абонент не желает. И кубик тоже."},{"id":"n005","text":"Есть вещи, которые лучше не говорить вслух."},{"id":"n006","text":"Звонок в три ночи — это не жест, это диагноз."},{"id":"n007","text":"Лучше выспись. Номер никуда не денется."},{"id":"n008","text":"Нет. И не перезванивай «просто спросить»."},{"id":"n009","text":"Телефон придумали, чтобы им не пользоваться."},{"id":"n010","text":"Оставь человека в покое. И себя тоже."},{"id":"n011","text":"То, что ты хочешь сказать, завтра покажется глупым."},{"id":"n012","text":"Пусть позвонит первым. Хоть раз."},{"id":"n013","text":"Кубик против. Кубик видел твои выходные."},{"id":"n014","text":"Нет. Но ты же всё равно позвонишь."}]}</script>
-<script type="application/json" id="locale-en">{"ui":{"title":"So, do we call?","settings":"Settings","language":"Language","chance":"Chance of “YES”","hint":"0% — do-not-disturb mode, 100% — dialling-right-now mode.","done":"Done","spin":"Spin the dial!","donate":"Top up the dev’s phone","cube":"Handset die with the answer","toast":"A donation link goes here. I promise not to spend it on roaming.","yesWord":"YES","noWord":"NO"},"yes":[{"id":"y001","text":"They watched your story three times. That is an invitation."},{"id":"y002","text":"Texting is cowardice. Call."},{"id":"y003","text":"Voice notes don’t count. It has to be live."},{"id":"y004","text":"One call and everything is clear. Or worse."},{"id":"y005","text":"3 a.m. is the most honest hour for a conversation."},{"id":"y006","text":"They are definitely awake. Nobody sleeps anyway."},{"id":"y007","text":"You still have 400 minutes on the plan. Don’t waste them."},{"id":"y008","text":"If they don’t pick up, they simply didn’t hear it."},{"id":"y009","text":"Mum said call more often. Mum never said who."},{"id":"y010","text":"The ringing tone is already half a conversation."},{"id":"y011","text":"They won’t call first. Someone has to be the adult."},{"id":"y012","text":"You’ll call back once and then quit. Obviously."},{"id":"y013","text":"The phone is already in your hand. The rest is paperwork."},{"id":"y014","text":"Five minutes, tops. As always — two hours."},{"id":"y015","text":"Silence in the chat means it’s time to call."},{"id":"y016","text":"“Call me whenever you can” — and you can."},{"id":"y017","text":"The number is still not deleted. That’s a sign."},{"id":"y018","text":"You’ve already drafted the opening line. Don’t waste it."},{"id":"y019","text":"Roaming is expensive, but pride costs more."},{"id":"y020","text":"Excuse ready: “just checking whether you’re alive”."},{"id":"y021","text":"They haven’t blocked you. So they’re waiting."},{"id":"y022","text":"Bad signal means a reason to call again."},{"id":"y023","text":"You’re not asking anything serious. Just hearing a voice."},{"id":"y024","text":"A pocket dial doesn’t count. Do it on purpose."},{"id":"y025","text":"One ring, then hang up. Starting is the hard part."},{"id":"y026","text":"They’re staring at their phone too. Right now."},{"id":"y027","text":"If you don’t call you’ll think about it until morning."},{"id":"y028","text":"The silence is two years old. Time to ruin it."},{"id":"y029","text":"You’re not a stalker. You just really want to talk."},{"id":"y030","text":"They won’t recognise you right away. Even better."},{"id":"y031","text":"Calling at 7:58 a.m. counts as caring."},{"id":"y032","text":"Voicemail is a listener too. And it never interrupts."},{"id":"y033","text":"You’ve dialled 80% of the number. Stopping is unfair."},{"id":"y034","text":"Keep the video off. But call."},{"id":"y035","text":"They liked a photo from 2019 yesterday. They’re ready."},{"id":"y036","text":"You have exactly one reason. That is plenty."},{"id":"y037","text":"A text can be reread. A voice can’t. Call."},{"id":"y038","text":"What if they’re waiting for exactly your call. Happens."},{"id":"y039","text":"Battery at 4%. So the call will be short."},{"id":"y040","text":"You rehearsed the first sentence. Twice."},{"id":"y041","text":"They’ll say “I was just thinking about you”. Possibly."},{"id":"y042","text":"Unknown number? Then call from your own. Be brave."},{"id":"y043","text":"The neighbours hear everything anyway. Give them material."},{"id":"y044","text":"A minute on the phone is cheaper than a week of thinking."},{"id":"y045","text":"They read it and said nothing. So they want a call."},{"id":"y046","text":"You dialled and hung up. Now you owe an explanation."},{"id":"y047","text":"A missed call from you is a message too."},{"id":"y048","text":"“Hi, it’s me” — the rest writes itself."},{"id":"y049","text":"Your earbuds are charged. Fate left you no excuses."},{"id":"y050","text":"They called first once. Debts get repaid."},{"id":"y051","text":"Phones were built for calling. Shocking news."},{"id":"y052","text":"Your voice sounds better on the phone. Honestly."},{"id":"y053","text":"No answer the first time? Call the third time."},{"id":"y054","text":"Office hours are over, so you can be human now."},{"id":"y055","text":"You won’t cry. Well, almost."},{"id":"y056","text":"“Let’s talk later” — later has arrived."},{"id":"y057","text":"The die has seen your unsent drafts. Just call."},{"id":"y058","text":"Your mood is perfect right now. In an hour it won’t be."},{"id":"y059","text":"A call can’t be edited. That’s exactly why it works."},{"id":"y060","text":"Last time. Say it with me: last time."}],"no":[{"id":"n001","text":"Don’t call. Text. Or do nothing at all."},{"id":"n002","text":"Put the phone down. Slowly."},{"id":"n003","text":"Nobody needs your voice today. Not even you."},{"id":"n004","text":"The subscriber would rather not. Neither would the die."},{"id":"n005","text":"Some things are better left unsaid out loud."},{"id":"n006","text":"A 3 a.m. call isn’t a gesture, it’s a diagnosis."},{"id":"n007","text":"Get some sleep. The number isn’t going anywhere."},{"id":"n008","text":"No. And don’t call back “just to ask something”."},{"id":"n009","text":"The phone was invented so you wouldn’t use it."},{"id":"n010","text":"Leave them alone. Yourself too."},{"id":"n011","text":"Whatever you want to say will sound silly tomorrow."},{"id":"n012","text":"Let them call first. Just once."},{"id":"n013","text":"The die says no. The die saw your weekend."},{"id":"n014","text":"No. But you’ll call anyway."}]}</script>
+<script type="application/json" id="locale-uk">{"ui":{"title":"Ну шо, дзвонимо?","settings":"Налаштування","language":"Мова","chance":"Шанс на «ТАК»","hint":"0% — режим «не турбувати», 100% — режим «набираю прямо зараз».","done":"Готово","spin":"Крути диск!","donate":"Розробнику на телефон","dial":"Дисковий номеронабирач з відповіддю","sound":"Звук","toast":"Тут буде лінк на банку. Обіцяю не витратити на роумінг.","yesWord":"ТАК","noWord":"НІ"},"yes":[{"id":"y001","text":"Воно тричі подивилось твій сторіс. Це запрошення."},{"id":"y002","text":"Написати — це боягузтво. Дзвони."},{"id":"y003","text":"Голосові не рахуються. Треба живим голосом."},{"id":"y004","text":"Один дзвінок — і все стане ясно. Ну або гірше."},{"id":"y005","text":"Третя ночі — найчесніший час для розмови."},{"id":"y006","text":"Воно точно не спить. Люди ж не спять."},{"id":"y007","text":"У тебе ще 400 хвилин по тарифу. Не пропадати ж."},{"id":"y008","text":"Якщо не відповість — значить просто не чуло."},{"id":"y009","text":"Мама казала дзвонити частіше. Мама не казала кому."},{"id":"y010","text":"Гудки — це вже половина розмови."},{"id":"y011","text":"Воно перше не подзвонить. Хтось має бути дорослим."},{"id":"y012","text":"Передзвониш — і одразу завʼяжеш. Звісно."},{"id":"y013","text":"Телефон уже в руці. Решта — формальність."},{"id":"y014","text":"На пʼять хвилин. Як завжди — на дві години."},{"id":"y015","text":"Тиша в чаті означає, що треба дзвонити."},{"id":"y016","text":"«Набери, як зможеш» — ти ж можеш."},{"id":"y017","text":"Номер досі не видалений. Це знак."},{"id":"y018","text":"Ти вже склав що сказати. Шкода не використати."},{"id":"y019","text":"Роумінг дорогий, але гордість — дорожча."},{"id":"y020","text":"Відмовка готова: «просто перевіряю, чи ти живий»."},{"id":"y021","text":"Воно не заблокувало тебе. Отже, чекає."},{"id":"y022","text":"Зв’язок поганий — буде привід передзвонити."},{"id":"y023","text":"Ти ж не питаєш нічого серйозного. Просто голос послухати."},{"id":"y024","text":"Випадковий дзвінок у кишені не рахується. Треба свідомо."},{"id":"y025","text":"Один гудок — і одразу скинеш. Головне почати."},{"id":"y026","text":"Воно теж дивиться в телефон. Прямо зараз."},{"id":"y027","text":"Якщо не подзвониш — будеш думати про це до ранку."},{"id":"y028","text":"Мовчання триває два роки. Пора його зіпсувати."},{"id":"y029","text":"Ти ж не маніяк. Ти просто дуже хочеш поговорити."},{"id":"y030","text":"Воно тебе не одразу згадає. Тим цікавіше."},{"id":"y031","text":"Дзвонити о 7:58 ранку — це турбота."},{"id":"y032","text":"Автовідповідач теж слухач. І не перебиває."},{"id":"y033","text":"Ти набрав 80% номера. Нечесно зупинятись."},{"id":"y034","text":"Відеозвʼязок не вмикай. Але подзвони."},{"id":"y035","text":"Воно вчора лайкнуло фото 2019 року. Воно готове."},{"id":"y036","text":"У тебе рівно одна причина. Цього достатньо."},{"id":"y037","text":"Текст можна перечитати. Голос — не можна. Дзвони."},{"id":"y038","text":"Раптом там чекають саме твого дзвінка. Трапляється."},{"id":"y039","text":"Зарядки 4%. Значить, розмова буде коротка."},{"id":"y040","text":"Ти вже репетирував перше речення. Двічі."},{"id":"y041","text":"Воно скаже «я якраз про тебе думало». Можливо."},{"id":"y042","text":"Невідомий номер? То подзвони зі свого. Не бійся."},{"id":"y043","text":"Сусіди однаково все чують. Хоч буде що слухати."},{"id":"y044","text":"Хвилина розмови дешевша за тиждень роздумів."},{"id":"y045","text":"Воно прочитало і не відповіло. Отже, чекає дзвінка."},{"id":"y046","text":"Ти набрав і скинув. Тепер треба пояснити. Дзвони."},{"id":"y047","text":"Пропущений від тебе — теж повідомлення."},{"id":"y048","text":"«Привіт, це я» — решта придумається по ходу."},{"id":"y049","text":"Гарнітура заряджена. Доля не дає відмазок."},{"id":"y050","text":"Вона колись сама дзвонила першою. Борг повертаємо."},{"id":"y051","text":"Телефон створений для дзвінків. Шокуюча новина."},{"id":"y052","text":"Твій голос по телефону звучить краще. Чесно."},{"id":"y053","text":"Воно не відповідає з першого разу. Дзвони з третього."},{"id":"y054","text":"Робочий час закінчився — значить можна по-людськи."},{"id":"y055","text":"Ти ж не будеш плакати. Ну, майже."},{"id":"y056","text":"«Поговоримо потім» — потім настало."},{"id":"y057","text":"Кубик бачив твої чернетки повідомлень. Краще подзвони."},{"id":"y058","text":"У тебе ідеальний настрій. Через годину буде гірший."},{"id":"y059","text":"Дзвінок не можна відредагувати. Саме тому він працює."},{"id":"y060","text":"Останній раз. Повторюй за мною: останній раз."}],"no":[{"id":"n001","text":"Не дзвони. Напиши. Або нічого не роби."},{"id":"n002","text":"Поклади телефон. Повільно."},{"id":"n003","text":"Сьогодні твій голос нікому не потрібен. Навіть тобі."},{"id":"n004","text":"Абонент не бажає. І кубик теж."},{"id":"n005","text":"Є речі, які краще не казати вголос."},{"id":"n006","text":"Дзвінок о третій ночі — це не жест, це діагноз."},{"id":"n007","text":"Краще виспись. Номер нікуди не втече."},{"id":"n008","text":"Ні. І не передзвонюй «просто спитати»."},{"id":"n009","text":"Телефон вигадали, щоб ним не користуватись."},{"id":"n010","text":"Залиш людину в спокої. І себе теж."},{"id":"n011","text":"Те, що ти хочеш сказати, завтра здасться дурним."},{"id":"n012","text":"Нехай подзвонить перше. Хоч раз."},{"id":"n013","text":"Кубик проти. Кубик бачив твої вихідні."},{"id":"n014","text":"Ні. Але ти ж все одно подзвониш."}]}</script>
+<script type="application/json" id="locale-ru">{"ui":{"title":"Ну что, звоним?","settings":"Настройки","language":"Язык","chance":"Шанс на «ДА»","hint":"0% — режим «не беспокоить», 100% — режим «набираю прямо сейчас».","done":"Готово","spin":"Крути диск!","donate":"Разработчику на телефон","dial":"Дисковый номеронабиратель с ответом","sound":"Звук","toast":"Тут будет ссылка на банку. Обещаю не потратить на роуминг.","yesWord":"ДА","noWord":"НЕТ"},"yes":[{"id":"y001","text":"Оно три раза посмотрело твой сторис. Это приглашение."},{"id":"y002","text":"Написать — это трусость. Звони."},{"id":"y003","text":"Голосовые не считаются. Нужно живым голосом."},{"id":"y004","text":"Один звонок — и всё станет ясно. Ну или хуже."},{"id":"y005","text":"Три ночи — самое честное время для разговора."},{"id":"y006","text":"Оно точно не спит. Люди же не спят."},{"id":"y007","text":"У тебя ещё 400 минут по тарифу. Не пропадать же."},{"id":"y008","text":"Если не ответит — значит просто не услышало."},{"id":"y009","text":"Мама говорила звонить чаще. Мама не говорила кому."},{"id":"y010","text":"Гудки — это уже половина разговора."},{"id":"y011","text":"Оно первым не позвонит. Кто-то должен быть взрослым."},{"id":"y012","text":"Перезвонишь — и сразу завяжешь. Конечно."},{"id":"y013","text":"Телефон уже в руке. Остальное — формальность."},{"id":"y014","text":"На пять минут. Как всегда — на два часа."},{"id":"y015","text":"Тишина в чате означает, что надо звонить."},{"id":"y016","text":"«Набери, как сможешь» — ты же можешь."},{"id":"y017","text":"Номер до сих пор не удалён. Это знак."},{"id":"y018","text":"Ты уже придумал что сказать. Жалко не использовать."},{"id":"y019","text":"Роуминг дорогой, но гордость — дороже."},{"id":"y020","text":"Отмазка готова: «просто проверяю, жив ли ты»."},{"id":"y021","text":"Оно тебя не заблокировало. Значит, ждёт."},{"id":"y022","text":"Связь плохая — будет повод перезвонить."},{"id":"y023","text":"Ты же не спрашиваешь ничего серьёзного. Просто голос послушать."},{"id":"y024","text":"Случайный звонок в кармане не считается. Надо осознанно."},{"id":"y025","text":"Один гудок — и сразу сбросишь. Главное начать."},{"id":"y026","text":"Оно тоже смотрит в телефон. Прямо сейчас."},{"id":"y027","text":"Если не позвонишь — будешь думать об этом до утра."},{"id":"y028","text":"Молчание длится два года. Пора его испортить."},{"id":"y029","text":"Ты же не маньяк. Ты просто очень хочешь поговорить."},{"id":"y030","text":"Оно тебя не сразу вспомнит. Тем интереснее."},{"id":"y031","text":"Звонить в 7:58 утра — это забота."},{"id":"y032","text":"Автоответчик тоже слушатель. И не перебивает."},{"id":"y033","text":"Ты набрал 80% номера. Нечестно останавливаться."},{"id":"y034","text":"Видеосвязь не включай. Но позвони."},{"id":"y035","text":"Оно вчера лайкнуло фото 2019 года. Оно готово."},{"id":"y036","text":"У тебя ровно одна причина. Этого достаточно."},{"id":"y037","text":"Текст можно перечитать. Голос — нельзя. Звони."},{"id":"y038","text":"А вдруг там ждут именно твоего звонка. Бывает."},{"id":"y039","text":"Заряда 4%. Значит, разговор будет короткий."},{"id":"y040","text":"Ты уже репетировал первую фразу. Дважды."},{"id":"y041","text":"Оно скажет «я как раз о тебе думало». Возможно."},{"id":"y042","text":"Неизвестный номер? Так позвони со своего. Смелее."},{"id":"y043","text":"Соседи всё равно всё слышат. Пусть будет что слушать."},{"id":"y044","text":"Минута разговора дешевле недели раздумий."},{"id":"y045","text":"Оно прочитало и не ответило. Значит, ждёт звонка."},{"id":"y046","text":"Ты набрал и сбросил. Теперь надо объяснить. Звони."},{"id":"y047","text":"Пропущенный от тебя — тоже сообщение."},{"id":"y048","text":"«Привет, это я» — остальное придумается по ходу."},{"id":"y049","text":"Наушники заряжены. Судьба не оставила отмазок."},{"id":"y050","text":"Оно когда-то звонило первым. Долг возвращаем."},{"id":"y051","text":"Телефон создан для звонков. Шокирующая новость."},{"id":"y052","text":"Твой голос по телефону звучит лучше. Честно."},{"id":"y053","text":"С первого раза не отвечает. Звони с третьего."},{"id":"y054","text":"Рабочий день кончился — значит можно по-человечески."},{"id":"y055","text":"Ты же не будешь плакать. Ну, почти."},{"id":"y056","text":"«Поговорим потом» — потом наступило."},{"id":"y057","text":"Кубик видел твои черновики сообщений. Лучше позвони."},{"id":"y058","text":"У тебя идеальное настроение. Через час будет хуже."},{"id":"y059","text":"Звонок нельзя отредактировать. Именно поэтому он работает."},{"id":"y060","text":"Последний раз. Повторяй за мной: последний раз."}],"no":[{"id":"n001","text":"Не звони. Напиши. Или не делай ничего."},{"id":"n002","text":"Положи телефон. Медленно."},{"id":"n003","text":"Сегодня твой голос никому не нужен. Даже тебе."},{"id":"n004","text":"Абонент не желает. И кубик тоже."},{"id":"n005","text":"Есть вещи, которые лучше не говорить вслух."},{"id":"n006","text":"Звонок в три ночи — это не жест, это диагноз."},{"id":"n007","text":"Лучше выспись. Номер никуда не денется."},{"id":"n008","text":"Нет. И не перезванивай «просто спросить»."},{"id":"n009","text":"Телефон придумали, чтобы им не пользоваться."},{"id":"n010","text":"Оставь человека в покое. И себя тоже."},{"id":"n011","text":"То, что ты хочешь сказать, завтра покажется глупым."},{"id":"n012","text":"Пусть позвонит первым. Хоть раз."},{"id":"n013","text":"Кубик против. Кубик видел твои выходные."},{"id":"n014","text":"Нет. Но ты же всё равно позвонишь."}]}</script>
+<script type="application/json" id="locale-en">{"ui":{"title":"So, do we call?","settings":"Settings","language":"Language","chance":"Chance of “YES”","hint":"0% — do-not-disturb mode, 100% — dialling-right-now mode.","done":"Done","spin":"Spin the dial!","donate":"Top up the dev’s phone","dial":"Rotary dial showing the answer","sound":"Sound","toast":"A donation link goes here. I promise not to spend it on roaming.","yesWord":"YES","noWord":"NO"},"yes":[{"id":"y001","text":"They watched your story three times. That is an invitation."},{"id":"y002","text":"Texting is cowardice. Call."},{"id":"y003","text":"Voice notes don’t count. It has to be live."},{"id":"y004","text":"One call and everything is clear. Or worse."},{"id":"y005","text":"3 a.m. is the most honest hour for a conversation."},{"id":"y006","text":"They are definitely awake. Nobody sleeps anyway."},{"id":"y007","text":"You still have 400 minutes on the plan. Don’t waste them."},{"id":"y008","text":"If they don’t pick up, they simply didn’t hear it."},{"id":"y009","text":"Mum said call more often. Mum never said who."},{"id":"y010","text":"The ringing tone is already half a conversation."},{"id":"y011","text":"They won’t call first. Someone has to be the adult."},{"id":"y012","text":"You’ll call back once and then quit. Obviously."},{"id":"y013","text":"The phone is already in your hand. The rest is paperwork."},{"id":"y014","text":"Five minutes, tops. As always — two hours."},{"id":"y015","text":"Silence in the chat means it’s time to call."},{"id":"y016","text":"“Call me whenever you can” — and you can."},{"id":"y017","text":"The number is still not deleted. That’s a sign."},{"id":"y018","text":"You’ve already drafted the opening line. Don’t waste it."},{"id":"y019","text":"Roaming is expensive, but pride costs more."},{"id":"y020","text":"Excuse ready: “just checking whether you’re alive”."},{"id":"y021","text":"They haven’t blocked you. So they’re waiting."},{"id":"y022","text":"Bad signal means a reason to call again."},{"id":"y023","text":"You’re not asking anything serious. Just hearing a voice."},{"id":"y024","text":"A pocket dial doesn’t count. Do it on purpose."},{"id":"y025","text":"One ring, then hang up. Starting is the hard part."},{"id":"y026","text":"They’re staring at their phone too. Right now."},{"id":"y027","text":"If you don’t call you’ll think about it until morning."},{"id":"y028","text":"The silence is two years old. Time to ruin it."},{"id":"y029","text":"You’re not a stalker. You just really want to talk."},{"id":"y030","text":"They won’t recognise you right away. Even better."},{"id":"y031","text":"Calling at 7:58 a.m. counts as caring."},{"id":"y032","text":"Voicemail is a listener too. And it never interrupts."},{"id":"y033","text":"You’ve dialled 80% of the number. Stopping is unfair."},{"id":"y034","text":"Keep the video off. But call."},{"id":"y035","text":"They liked a photo from 2019 yesterday. They’re ready."},{"id":"y036","text":"You have exactly one reason. That is plenty."},{"id":"y037","text":"A text can be reread. A voice can’t. Call."},{"id":"y038","text":"What if they’re waiting for exactly your call. Happens."},{"id":"y039","text":"Battery at 4%. So the call will be short."},{"id":"y040","text":"You rehearsed the first sentence. Twice."},{"id":"y041","text":"They’ll say “I was just thinking about you”. Possibly."},{"id":"y042","text":"Unknown number? Then call from your own. Be brave."},{"id":"y043","text":"The neighbours hear everything anyway. Give them material."},{"id":"y044","text":"A minute on the phone is cheaper than a week of thinking."},{"id":"y045","text":"They read it and said nothing. So they want a call."},{"id":"y046","text":"You dialled and hung up. Now you owe an explanation."},{"id":"y047","text":"A missed call from you is a message too."},{"id":"y048","text":"“Hi, it’s me” — the rest writes itself."},{"id":"y049","text":"Your earbuds are charged. Fate left you no excuses."},{"id":"y050","text":"They called first once. Debts get repaid."},{"id":"y051","text":"Phones were built for calling. Shocking news."},{"id":"y052","text":"Your voice sounds better on the phone. Honestly."},{"id":"y053","text":"No answer the first time? Call the third time."},{"id":"y054","text":"Office hours are over, so you can be human now."},{"id":"y055","text":"You won’t cry. Well, almost."},{"id":"y056","text":"“Let’s talk later” — later has arrived."},{"id":"y057","text":"The die has seen your unsent drafts. Just call."},{"id":"y058","text":"Your mood is perfect right now. In an hour it won’t be."},{"id":"y059","text":"A call can’t be edited. That’s exactly why it works."},{"id":"y060","text":"Last time. Say it with me: last time."}],"no":[{"id":"n001","text":"Don’t call. Text. Or do nothing at all."},{"id":"n002","text":"Put the phone down. Slowly."},{"id":"n003","text":"Nobody needs your voice today. Not even you."},{"id":"n004","text":"The subscriber would rather not. Neither would the die."},{"id":"n005","text":"Some things are better left unsaid out loud."},{"id":"n006","text":"A 3 a.m. call isn’t a gesture, it’s a diagnosis."},{"id":"n007","text":"Get some sleep. The number isn’t going anywhere."},{"id":"n008","text":"No. And don’t call back “just to ask something”."},{"id":"n009","text":"The phone was invented so you wouldn’t use it."},{"id":"n010","text":"Leave them alone. Yourself too."},{"id":"n011","text":"Whatever you want to say will sound silly tomorrow."},{"id":"n012","text":"Let them call first. Just once."},{"id":"n013","text":"The die says no. The die saw your weekend."},{"id":"n014","text":"No. But you’ll call anyway."}]}</script>
 <!-- locales:end -->
 
 <script>
@@ -391,8 +386,9 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
   const DEFAULT_LANG = 'uk';
   const COOKIE = 'dzvonymo_lang';
   const CHANCE_KEY = 'dzvonymo-chance-v1';
+  const SOUND_KEY = 'dzvonymo-sound-v1';
   const LOAD_TIMEOUT = 8000;
-  /* classic handset glyph in a 24x24 box - used for the die texture and the pips */
+  /* classic handset glyph in a 24x24 box - the die texture and the icons use it too */
   const PHONE_PATH = 'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z';
 
   function readCookie(name) {
@@ -482,8 +478,7 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
       .catch(() => fb.then(f => { if (!f) throw new Error('no locales'); return { lang: DEFAULT_LANG, dict: f }; }));
   }
 
-  /* Tiled texture for the die faces: scattered handsets plus rotary-dial specks.
-     Every stamp is repeated across the 9 neighbouring tiles so the pattern seams. */
+  /* ---- bakelite texture: scattered handsets, seamless across the tile ---- */
   function makeHandsets() {
     const n = 220, cv = document.createElement('canvas');
     cv.width = cv.height = n;
@@ -513,30 +508,185 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
     }
     return cv.toDataURL('image/png');
   }
-  try { document.documentElement.style.setProperty('--handsets', 'url(' + makeHandsets() + ')'); } catch (e) {}
+  try {
+    const tex = makeHandsets();
+    document.documentElement.style.setProperty('--handsets', 'url(' + tex + ')');
+    document.getElementById('tex-img').setAttribute('href', tex);
+  } catch (e) {}
 
-  /* the pips on the non-answer faces are little handsets instead of dots */
-  document.querySelectorAll('.pips').forEach(box => {
-    const count = box.classList.contains('p4') ? 4 : box.classList.contains('p2') ? 2 : 1;
-    for (let i = 0; i < count; i++) {
-      const pip = document.createElement('i');
-      pip.className = 'pip';
-      pip.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + PHONE_PATH + '" fill="currentColor"/></svg>';
-      box.appendChild(pip);
+  /* ---- the dial ----
+     Digits sit on the fixed plate; the finger wheel with its ten holes turns over
+     them, exactly like the real thing. Pulling hole N round to the finger stop is
+     30*N degrees, and the governed return back home ticks N times. */
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const CX = 200, WHEEL_R = 190, HUB_R = 78, ORBIT = 136, HOLE_R = 26;
+  const STOP_ANGLE = 135, STEP = 30, MAX_PULSES = 10;
+  const LABELS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
+  function at(angle, radius) {
+    const t = angle * Math.PI / 180;
+    return [CX + radius * Math.sin(t), CX - radius * Math.cos(t)];
+  }
+  function holeAngle(i) { return 105 - i * STEP; }
+  function circlePath(cx, cy, r) {
+    return 'M' + (cx - r) + ',' + cy + 'a' + r + ',' + r + ' 0 1,0 ' + (2 * r) + ',0' +
+           'a' + r + ',' + r + ' 0 1,0 ' + (-2 * r) + ',0Z';
+  }
+  function el(name, attrs) {
+    const n = document.createElementNS(SVG_NS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+
+  const wheel = document.getElementById('wheel');
+  const dialSvg = document.getElementById('dial');
+  const dialWrap = document.getElementById('dial-wrap');
+
+  (function buildDial() {
+    let d = circlePath(CX, CX, WHEEL_R) + circlePath(CX, CX, HUB_R);
+    const digits = document.getElementById('digits');
+    for (let i = 0; i < LABELS.length; i++) {
+      const p = at(holeAngle(i), ORBIT);
+      d += circlePath(p[0], p[1], HOLE_R);
+      const t = el('text', { x: p[0], y: p[1] + 10, 'text-anchor': 'middle', class: 'digit' });
+      t.textContent = LABELS[i];
+      digits.appendChild(t);
     }
-  });
+    document.getElementById('wheel-face').setAttribute('d', d);
+    document.getElementById('wheel-tex').setAttribute('d', d);
 
+    /* the finger stop: a blade on the fixed plate, lying along the radius at 4:30,
+       poking just past the wheel rim so the hole you pull round runs into it */
+    const s = at(STOP_ANGLE, 152);
+    const place = 'translate(' + s[0] + ' ' + s[1] + ') rotate(' + (STOP_ANGLE - 180) + ')';
+    const stop = document.getElementById('stop');
+    stop.appendChild(el('rect', {
+      x: -17, y: -46, width: 34, height: 92, rx: 16, transform: place,
+      fill: 'url(#bezel)', stroke: 'rgba(0,0,0,0.5)', 'stroke-width': 2
+    }));
+    stop.appendChild(el('rect', {
+      x: -7, y: -34, width: 14, height: 62, rx: 7, transform: place,
+      fill: 'rgba(255,245,220,0.45)'
+    }));
+  })();
+
+  /* ---- the green dot-matrix display in the hub ---- */
+  const GLYPHS = {
+    A: ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+    T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    K: ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+    H: ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+    I: ['01110', '00100', '00100', '00100', '00100', '00100', '01110'],
+    D: ['01110', '01010', '01010', '01010', '01010', '11111', '10001'],
+    E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+    Y: ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
+    S: ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
+    N: ['10001', '11001', '11001', '10101', '10011', '10011', '10001'],
+    O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110']
+  };
+  /* Cyrillic and Latin look-alikes share one glyph */
+  const FOLD = { 'А': 'A', 'Т': 'T', 'К': 'K', 'Н': 'H', 'І': 'I', 'Д': 'D', 'Е': 'E', 'О': 'O' };
+  const COLS = 17, ROWS = 7, PITCH = 7.3, DOT_R = 2.7;
+  const originX = CX - (COLS - 1) * PITCH / 2;
+  const originY = CX - (ROWS - 1) * PITCH / 2;
+  const screenOn = document.getElementById('screen-on');
+
+  (function buildScreen() {
+    const off = document.getElementById('screen-off');
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        off.appendChild(el('circle', {
+          cx: originX + c * PITCH, cy: originY + r * PITCH, r: DOT_R, class: 'dot-off'
+        }));
+      }
+    }
+  })();
+
+  function paint(cells) {
+    while (screenOn.firstChild) screenOn.removeChild(screenOn.firstChild);
+    cells.forEach(p => screenOn.appendChild(el('circle', {
+      cx: originX + p[0] * PITCH, cy: originY + p[1] * PITCH, r: DOT_R, class: 'dot-on'
+    })));
+  }
+  function showWord(word) {
+    const chars = String(word || '').toUpperCase().split('')
+      .map(ch => GLYPHS[FOLD[ch] || ch]).filter(Boolean);
+    if (!chars.length) return paint([]);
+    const width = chars.length * 5 + (chars.length - 1);
+    const left = Math.round((COLS - width) / 2);
+    const cells = [];
+    chars.forEach((glyph, gi) => {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < 5; c++) {
+          if (glyph[r][c] === '1') cells.push([left + gi * 6 + c, r]);
+        }
+      }
+    });
+    paint(cells);
+  }
+  function showNoise() {
+    const cells = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) if (Math.random() < 0.16) cells.push([c, r]);
+    }
+    paint(cells);
+  }
+
+  /* ---- sound: the ratchet is synthesised, no audio files ---- */
+  let soundOn = true;
+  try { soundOn = localStorage.getItem(SOUND_KEY) !== '0'; } catch (e) {}
+  let actx = null, noise = null;
+
+  function audio() {
+    if (!soundOn) return null;
+    if (!actx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { actx = new AC(); } catch (e) { return null; }
+    }
+    if (actx.state === 'suspended') { try { actx.resume(); } catch (e) {} }
+    if (!noise) {
+      const n = Math.floor(actx.sampleRate * 0.12);
+      noise = actx.createBuffer(1, n, actx.sampleRate);
+      const data = noise.getChannelData(0);
+      for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+    }
+    return actx;
+  }
+  function blip(freq, gain, decay, q) {
+    const ac = audio();
+    if (!ac) return;
+    const t = ac.currentTime;
+    const src = ac.createBufferSource();
+    src.buffer = noise;
+    src.playbackRate.value = 0.8 + Math.random() * 0.4;
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = freq;
+    bp.Q.value = q;
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(gain, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    src.connect(bp); bp.connect(g); g.connect(ac.destination);
+    src.start(t);
+    src.stop(t + decay + 0.02);
+  }
+  const tick = () => blip(1800 + Math.random() * 700, 0.2, 0.05, 1.1);
+  const softTick = () => blip(1400 + Math.random() * 400, 0.06, 0.03, 1.4);
+  const thud = () => blip(300, 0.3, 0.13, 0.7);
+  const home = () => blip(220, 0.22, 0.16, 0.6);
+
+  /* ---- app wiring ---- */
   const app = document.getElementById('app');
   const loadError = document.getElementById('load-error');
-  const scene = document.getElementById('scene');
-  const cube = document.getElementById('cube');
-  const answerEl = document.getElementById('answer');
   const verdict = document.getElementById('verdict');
   const spinBtn = document.getElementById('spin');
   const toast = document.getElementById('toast');
   const sheet = document.getElementById('sheet');
   const chance = document.getElementById('chance');
   const chanceOut = document.getElementById('chance-out');
+  const soundBox = document.getElementById('sound');
   const langBtns = Array.from(document.querySelectorAll('#langs [data-lang]'));
 
   try {
@@ -549,10 +699,17 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
     try { localStorage.setItem(CHANCE_KEY, chance.value); } catch (e) {}
   });
 
+  soundBox.checked = soundOn;
+  soundBox.addEventListener('change', () => {
+    soundOn = soundBox.checked;
+    try { localStorage.setItem(SOUND_KEY, soundOn ? '1' : '0'); } catch (e) {}
+    if (soundOn) softTick();
+  });
+
   let lang = langFromUrl() || savedLang() || DEFAULT_LANG;
   let dict = null;
-  let rx = -22, ry = -32, busy = false;
   let isYes = true, currentId = null, lastId = null;
+  let angle = 0, busy = false, noiseTimer = 0;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function list(yes) { return yes ? dict.yes : dict.no; }
@@ -565,25 +722,142 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
     return item.id;
   }
   function lineText() {
-    const l = list(isYes);
-    const hit = l.find(x => x.id === currentId);
+    const hit = list(isYes).find(x => x.id === currentId);
     return hit ? hit.text : '';
   }
   function answerText() { return isYes ? dict.ui.yesWord : dict.ui.noWord; }
+
+  function setAngle(a) {
+    angle = a;
+    wheel.setAttribute('transform', 'rotate(' + a.toFixed(2) + ' ' + CX + ' ' + CX + ')');
+  }
 
   function render() {
     const d = dict.ui;
     document.documentElement.lang = lang;
     document.title = d.title;
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = d[el.dataset.i18n] || ''; });
+    document.querySelectorAll('[data-i18n]').forEach(e => { e.textContent = d[e.dataset.i18n] || ''; });
     document.getElementById('settings-btn').setAttribute('aria-label', d.settings);
-    cube.setAttribute('aria-label', d.cube);
-    answerEl.textContent = answerText();
+    dialSvg.setAttribute('aria-label', d.dial);
     if (!list(isYes).some(x => x.id === currentId)) currentId = pickId(isYes);
+    showWord(answerText());
     verdict.textContent = lineText();
     langBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
   }
 
+  function ring() {
+    if (reduce) return;
+    dialWrap.classList.remove('ringing');
+    void dialWrap.offsetWidth;
+    dialWrap.classList.add('ringing');
+    setTimeout(() => dialWrap.classList.remove('ringing'), 1050);
+  }
+
+  function finish(result) {
+    setAngle(0);
+    clearInterval(noiseTimer); noiseTimer = 0;
+    dialWrap.classList.remove('spinning');
+    isYes = result.yes;
+    currentId = result.id;
+    showWord(answerText());
+    verdict.textContent = lineText();
+    verdict.classList.remove('out');
+    busy = false;
+    spinBtn.removeAttribute('aria-busy');
+    home();
+    if (isYes) ring();
+    try { if (navigator.vibrate) navigator.vibrate(isYes ? [30, 90, 30] : 30); } catch (e) {}
+  }
+
+  /* wind: pull the wheel round first (the button does this; a drag already did it) */
+  function roll(pulses, from, wind) {
+    busy = true;
+    spinBtn.setAttribute('aria-busy', 'true');
+    verdict.classList.add('out');
+    const yes = Math.random() * 100 < Number(chance.value);
+    const result = { yes: yes, id: pickId(yes) };
+
+    clearInterval(noiseTimer);
+    noiseTimer = setInterval(showNoise, 70);
+    showNoise();
+    if (!reduce) dialWrap.classList.add('spinning');
+
+    const target = pulses * STEP;
+    const windMs = wind ? (reduce ? 1 : 220 + target * 1.1) : 0;
+    const holdMs = wind ? (reduce ? 1 : 110) : 0;
+    const backMs = reduce ? 1 : pulses * 100;
+    const start = performance.now();
+    let ticks = 0, hit = !wind;
+
+    (function frame(now) {
+      const t = now - start;
+      if (t < windMs) {
+        setAngle(from + (target - from) * (1 - Math.pow(1 - t / windMs, 3)));
+      } else if (t < windMs + holdMs) {
+        setAngle(target);
+        if (!hit) { hit = true; thud(); }
+      } else {
+        const base = wind ? target : from;
+        const p = Math.min(1, (t - windMs - holdMs) / backMs);
+        setAngle(base * (1 - p));
+        const want = Math.floor(p * pulses);
+        while (ticks < want) { ticks++; tick(); }
+        if (p >= 1) return finish(result);
+      }
+      requestAnimationFrame(frame);
+    })(performance.now());
+  }
+
+  function randomRoll() {
+    if (busy || !dict) return;
+    roll(4 + Math.floor(Math.random() * (MAX_PULSES - 3)), 0, true);
+  }
+  spinBtn.addEventListener('click', randomRoll);
+
+  /* ---- drag: put a finger in a hole, pull to the stop, let go ---- */
+  let dragging = false, grabAngle = 0, travelled = 0, dragTicks = 0;
+
+  function pointerAngle(e) {
+    const r = dialSvg.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    return Math.atan2(dx, -dy) * 180 / Math.PI;
+  }
+  function wrapDeg(a) {
+    while (a > 180) a -= 360;
+    while (a < -180) a += 360;
+    return a;
+  }
+
+  dialSvg.addEventListener('pointerdown', e => {
+    if (busy || !dict) return;
+    e.preventDefault();
+    dragging = true;
+    travelled = 0;
+    dragTicks = 0;
+    grabAngle = pointerAngle(e);
+    try { dialSvg.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  dialSvg.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const next = Math.max(0, Math.min(MAX_PULSES * STEP, wrapDeg(pointerAngle(e) - grabAngle)));
+    travelled = Math.max(travelled, next);
+    const crossed = Math.floor(next / STEP);
+    while (dragTicks < crossed) { dragTicks++; softTick(); }
+    setAngle(next);
+  });
+  function release() {
+    if (!dragging) return;
+    dragging = false;
+    const pulses = Math.round(angle / STEP);
+    if (pulses >= 1) { roll(pulses, angle, false); return; }
+    if (travelled < 6) { setAngle(0); randomRoll(); return; }
+    setAngle(0);
+  }
+  dialSvg.addEventListener('pointerup', release);
+  dialSvg.addEventListener('pointercancel', release);
+
+  /* ---- boot ---- */
   function start() {
     loadError.hidden = true;
     loadDict(lang).then(r => {
@@ -606,38 +880,6 @@ input[type="range"] { width: 100%; accent-color: var(--amber); }
       langBtns.forEach(x => x.setAttribute('aria-checked', String(x.dataset.lang === lang)));
     });
   }));
-
-  function ring() {
-    if (reduce) return;
-    scene.classList.remove('ringing');
-    void scene.offsetWidth;
-    scene.classList.add('ringing');
-    setTimeout(() => scene.classList.remove('ringing'), 1100);
-  }
-
-  spinBtn.addEventListener('click', () => {
-    if (busy || !dict) return;
-    busy = true;
-    spinBtn.setAttribute('aria-busy', 'true');
-    const yes = Math.random() * 100 < Number(chance.value);
-    const nextId = pickId(yes);
-    verdict.classList.add('out');
-    rx -= 360;
-    ry += 720;
-    cube.classList.add('spinning');
-    cube.style.transform = 'rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-    const total = reduce ? 30 : 1700;
-    setTimeout(() => { isYes = yes; answerEl.textContent = answerText(); }, reduce ? 0 : 700);
-    setTimeout(() => {
-      isYes = yes; currentId = nextId;
-      verdict.textContent = lineText();
-      verdict.classList.remove('out');
-      busy = false;
-      spinBtn.removeAttribute('aria-busy');
-      if (yes) ring();
-      try { if (navigator.vibrate) navigator.vibrate(yes ? [30, 90, 30] : 30); } catch (e) {}
-    }, total);
-  });
 
   let toastTimer;
   function showToast(text) {

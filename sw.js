@@ -1,4 +1,4 @@
-const CACHE = 'dzvonymo-v1';
+const CACHE = 'dzvonymo-v2';
 const SHELL = [
   './',
   './index.html',
