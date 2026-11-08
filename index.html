@@ -57,7 +57,9 @@ body { margin: 0 }
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-html { box-sizing: border-box; height: 100vh; height: 100dvh; }
+/* clip, not hidden: the glow under the dial is wider than the screen and must not
+   widen the layout viewport (a WebView then zooms the whole page out) */
+html { box-sizing: border-box; height: 100vh; height: 100dvh; overflow: clip; }
 body { height: 100%; }
 body {
   background:
@@ -65,7 +67,7 @@ body {
   background-color: var(--bg-deep);
   color: var(--ink);
   font-family: var(--font-body);
-  overflow: hidden;
+  overflow: clip;
 }
 .app {
   height: 100%;
@@ -234,6 +236,7 @@ body.dragging { cursor: grabbing; -webkit-user-select: none; user-select: none; 
 }
 .sheet {
   width: 100%; max-width: 460px; box-sizing: border-box;
+  max-height: 100%; overflow-y: auto; overscroll-behavior: contain;
   background: #1B1026;
   border: 1px solid rgba(244, 185, 66, 0.3);
   border-bottom: 0;
