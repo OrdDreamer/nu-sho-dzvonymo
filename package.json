@@ -6,7 +6,7 @@
   "scripts": {
     "build:web": "node tools/build-web.mjs",
     "sync": "npm run build:web && cap sync android",
-    "apk": "npm run sync && cd android && gradlew assembleDebug"
+    "apk": "npm run sync && node tools/gradle.mjs assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
