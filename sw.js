@@ -1,4 +1,4 @@
-const CACHE = 'dzvonymo-v2';
+const CACHE = 'dzvonymo-v3';
 const SHELL = [
   './',
   './index.html',
@@ -10,7 +10,15 @@ const SHELL = [
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './icons/favicon-32.png',
+  './fonts/oswald-cyrillic-700-normal.woff2',
+  './fonts/oswald-latin-700-normal.woff2',
+  './fonts/manrope-cyrillic-500-normal.woff2',
+  './fonts/manrope-latin-500-normal.woff2',
+  './fonts/manrope-cyrillic-600-normal.woff2',
+  './fonts/manrope-latin-600-normal.woff2',
+  './fonts/manrope-cyrillic-800-normal.woff2',
+  './fonts/manrope-latin-800-normal.woff2'
 ];
 
 self.addEventListener('install', e => {
